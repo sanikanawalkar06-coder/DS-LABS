@@ -1,0 +1,113 @@
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *prev, *next;
+};
+
+Node *head = NULL;
+
+void insert(int x, int pos) {
+    Node *n = new Node{x, NULL, NULL};
+
+    if (head == NULL || pos <= 1) {
+        n->next = head;
+        if (head != NULL) head->prev = n;
+        head = n;
+        return;
+    }
+
+    Node *t = head;
+    for (int i = 1; i < pos - 1 && t->next != NULL; i++)
+        t = t->next;
+
+    n->next = t->next;
+    n->prev = t;
+    if (t->next != NULL) t->next->prev = n;
+    t->next = n;
+}
+
+void deleteNode(int pos) {
+    if (head == NULL) {
+        cout << "List is empty\n";
+        return;
+    }
+
+    Node *t = head;
+    for (int i = 1; i < pos && t != NULL; i++)
+        t = t->next;
+
+    if (t == NULL || pos < 1) {
+        cout << "Invalid position\n";
+        return;
+    }
+
+    if (t->prev != NULL) t->prev->next = t->next;
+    else head = t->next;
+
+    if (t->next != NULL) t->next->prev = t->prev;
+
+    delete t;
+}
+
+void display() {
+    Node *t = head, *last = NULL;
+
+    if (head == NULL) {
+        cout << "List is empty\n";
+        return;
+    }
+
+    cout << "Forward: ";
+    while (t != NULL) {
+        cout << t->data << " ";
+        last = t;
+        t = t->next;
+    }
+
+    cout << "\nReverse: ";
+    while (last != NULL) {
+        cout << last->data << " ";
+        last = last->prev;
+    }
+    cout << endl;
+}
+
+int main() {
+    int ch, x, pos;
+
+    do {
+        cout << "\n1.Insert  2.Delete  3.Display  4.Exit\n";
+        cout << "Enter choice: ";
+        cin >> ch;
+
+        switch (ch) {
+        case 1:
+            cout << "Enter value and position: ";
+            cin >> x >> pos;
+            insert(x, pos);
+            break;
+
+        case 2:
+            cout << "Enter position to delete: ";
+            cin >> pos;
+            deleteNode(pos);
+            break;
+
+        case 3:
+            display();
+            break;
+
+        case 4:
+            cout << "Exiting...\n";
+            break;
+
+        default:
+            cout << "Invalid choice\n";
+        }
+    } while (ch != 4);
+
+    return 0;
+}
